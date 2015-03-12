@@ -1,30 +1,30 @@
 <!doctype html>
 <html>
-  <head>
-    <link rel="stylesheet" type="text/css" href="https://cdn.mxpnl.com/libs/mixpanel-platform/css/reset.css">
-    <link rel="stylesheet" type="text/css" href="https://cdn.mxpnl.com/libs/mixpanel-platform/build/mixpanel-platform.v0.latest.min.css">
-    <script src="https://cdn.mxpnl.com/libs/mixpanel-platform/build/mixpanel-platform.v0.latest.min.js"></script>
-  </head>
-  <body class="mixpanel-platform-body">
-    <div class="mixpanel-platform-section">
-      <div id="eventSelect" style="float: left;"></div>
-      <div id="by" class="mixpanel-platform-label" style="margin-left: 10px; display: none;">by</div>
-      <div id="propSelect" style="float: left;"></div>
-      <div id="dateSelect" style="float: right;"></div>
-      <div style="clear: both;"></div>
-      <div id="graph"></div>
-    </div>
-    <div id="table"></div>
-    <script>
-     var data = {
-  'segment1': 10,
-  'segment2': 20,
-  'segment3': 40
-};
-$(document).ready(function() {
-    var barChart = $('<div></div>').appendTo('body').MPChart({chartType: 'bar'});    // Create a bar chart
-    barChart.MPChart('setData', data);                                               // Set the chart's data
-});
-    </script>
-  </body>
+    <head>
+        <link rel="stylesheet" type="text/css" href="https://cdn.mxpnl.com/libs/mixpanel-platform/css/reset.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.mxpnl.com/libs/mixpanel-platform/build/mixpanel-platform.v0.latest.min.css">
+        <script src="https://cdn.mxpnl.com/libs/mixpanel-platform/build/mixpanel-platform.v0.latest.min.js"></script>
+        <script>
+            // MP.api.ready will execute the callback function once API credentials have been set
+            MP.api.ready(function() {
+                // create a line chart
+                var lineChart = $('#lineChart').MPChart({chartType: 'line'});
+                // create a dropdown pre-populated with events from the authenticated project
+                $('#eventSelect').MPEventSelect().on('change', function(e, selectedEventName) {
+                    // when an event is chosen, run a segmentation query to get counts for that event
+                    MP.api.segment(selectedEventName).done(function(queryResults) {
+                        // display the results of the query in a line chart
+                        lineChart.MPChart('setData', queryResults);
+                    });
+                });
+            });
+        </script>
+    </head>
+    <body class="mixpanel-platform-body">
+        <div class="mixpanel-platform-section">
+            <div id="eventSelect" style="float: left;"></div>
+            <div style="clear: both;"></div>
+            <div id="lineChart" style="margin-top: 10px;"></div>
+        </div>
+    </body>
 </html>
